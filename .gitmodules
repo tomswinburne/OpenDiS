@@ -1,6 +1,7 @@
 [submodule "core/exadis"]
 	path = core/exadis
-	url = https://github.com/LLNL/exadis
+	url = https://github.com/tomswinburne/exadis
+	branch = plastic-distortion-output
 [submodule "core/pydis/python/ctypesgen"]
 	path = core/pydis/python/ctypesgen
 	url = https://github.com/davidjamesca/ctypesgen.git

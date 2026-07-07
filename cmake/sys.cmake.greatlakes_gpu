@@ -1,0 +1,32 @@
+# =====================================================================
+# UMich Great Lakes -- GPU (V100) build of OpenDiS + ExaDiS
+#
+# Target : 'gpu' partition (Tesla V100  ->  Kokkos_ARCH_VOLTA70)
+# Python : 'mace' conda environment  (~/.conda/envs/mace, Python 3.10)
+#
+# Load these modules before configuring/building
+# (done automatically by scripts/build_gpu_greatlakes.sbatch):
+#
+#     module load gcc/13.2.0 cuda/12.8.2 cmake/3.26.3
+#
+# A CUDA build uses cuFFT (bundled with the CUDA toolkit), so NO external
+# FFTW installation is required here.
+# =====================================================================
+
+set(Kokkos_ENABLE_SERIAL      On)
+set(Kokkos_ENABLE_OPENMP      On)
+set(Kokkos_ENABLE_CUDA        On)
+set(Kokkos_ENABLE_CUDA_LAMBDA On)
+set(Kokkos_ARCH_VOLTA70       On)   # Tesla V100 (sm_70)
+
+# Host C compiler. The C++ compiler is set to core/exadis/kokkos/bin/nvcc_wrapper
+# automatically by the top-level CMakeLists when Kokkos_ENABLE_CUDA is On.
+# nvcc_wrapper forwards to g++ found on PATH -> the loaded gcc/13.2.0 module.
+set(CMAKE_C_COMPILER gcc)
+
+# Build the ExaDiS python bindings (pyexadis) against the 'mace' conda env.
+# gcc 13 + CUDA 12.8: gcc 13 compiles pybind11 2.11 (pinned by the exadis
+# fork), which fails under gcc 14; the resulting .so stays ABI-compatible
+# with the conda-forge Python 3.10 in that env (libstdc++ GLIBCXX_3.4.34).
+set(EXADIS_PYTHON_BINDING On)
+set(PYTHON_EXECUTABLE $ENV{HOME}/.conda/envs/mace/bin/python)
